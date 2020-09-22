@@ -12,16 +12,29 @@ using Microsoft.Extensions.Hosting;
 
 namespace AgoraAcademy.AgoraEgo.Server
 {
+    /// <summary>
+    /// 启动类，在<see cref="Program.CreateHostBuilder(string[])"/>中被使用
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="configuration">依赖注入的配置文件</param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// 依赖注入的配置文件
+        /// </summary>
         public IConfiguration Configuration { get; }
 
-        // 将被运行时调用，被用于将服务添加到容器。
+        /// <summary>
+        /// 将被运行时调用，被用于将服务添加到容器。
+        /// </summary>
+        /// <param name="services">服务集合</param>
         public void ConfigureServices(IServiceCollection services)
         {
             // 于此处添加数据库连接，添加时应于SQL Server对象资源管理器中添加表
@@ -31,7 +44,12 @@ namespace AgoraAcademy.AgoraEgo.Server
             // 添加所有控制器
             services.AddControllers();
         }
-        // 添加数据库上下文
+
+        /// <summary>
+        /// 添加数据库上下文
+        /// </summary>
+        /// <typeparam name="TContext">数据库上下文类型</typeparam>
+        /// <param name="services">服务集合</param>
         private void AddDbContext<TContext>(IServiceCollection services)
             where TContext : DbContext
         {
@@ -44,7 +62,11 @@ namespace AgoraAcademy.AgoraEgo.Server
             });
         }
 
-        // 将被运行时调用，被用于配置HTTP请求管道。
+        /// <summary>
+        /// 将被运行时调用，被用于配置HTTP请求管道。
+        /// </summary>
+        /// <param name="app">应用建造器</param>
+        /// <param name="env">托管环境</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
