@@ -5,6 +5,11 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AgoraAcademy.AgoraEgo.Server.Authorization;
+using AgoraAcademy.AgoraEgo.Server.Data.DbContexts;
+using AgoraAcademy.AgoraEgo.Server.Helpers;
+using AgoraAcademy.AgoraEgo.Server.Interfaces;
+using AgoraAcademy.AgoraEgo.Server.Services;
+using Auth0.ManagementApi;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -49,9 +54,11 @@ namespace AgoraAcademy.AgoraEgo.Server
         /// <param name="services">服务集合</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            // 于此处注册数据库连接，添加时应于SQL Server对象资源管理器中添加表
+            // 于此处注册数据库连接
             //AddDbContext<TContext>(services);
             // ...
+            AddDbContext<UserDataContext>(services);
+
 
             // 添加身份验证
             services.AddAuthentication((options) =>
@@ -92,8 +99,29 @@ namespace AgoraAcademy.AgoraEgo.Server
             // 注册授权管理者
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 
+            // 注册Auth0用户管理API客户端
+            services.AddScoped<ManagementApiClient>((_) => GetNewManagementClient());
+
+            // 注册可用用户角色获取服务
+            services.AddScoped<IAvailableRoleGetterService, AvailableRoleGetterService>();
+
+            // 注册用户管理服务
+            services.AddScoped<IUserManagementService, UserManagementService>();
+
+            // 注册配置文件
+            services.AddSingleton<IConfiguration>(Configuration);
+
             // 添加所有控制器
             services.AddControllers();
+        }
+
+        /// <summary>
+        /// 获取新Auth0管理API客户端
+        /// </summary>
+        /// <returns>Auth0管理API客户端</returns>
+        private ManagementApiClient GetNewManagementClient()
+        {
+            return new ManagementApiClient(ManagementApiAccessTokenHelper.GetAccessToken(Configuration), Configuration["Auth0:Domain"]);
         }
 
         /// <summary>
