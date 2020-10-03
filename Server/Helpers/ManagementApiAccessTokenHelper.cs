@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AgoraAcademy.AgoraEgo.Server.Constants;
+using AgoraAcademy.AgoraEgo.Server.Extensions;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
@@ -32,15 +34,15 @@ namespace AgoraAcademy.AgoraEgo.Server.Helpers
         private static string InternalGetAccessToken(IConfiguration configuration)
         {
             // 创建token申请请求并发往Auth0
-            RestClient client = new RestClient($"https://{configuration["Auth0:Domain"]}/oauth/token");
+            RestClient client = new RestClient($"https://{configuration.GetAuth0Config(ConfigurationKeyConstants.Auth0Domain)}/oauth/token");
             RestRequest request = new RestRequest(Method.POST);
             request.AddHeader("content-type", "application/json");
             string json = JsonConvert.SerializeObject(new
             {
                 grant_type = "client_credentials",
-                client_id = configuration["Auth0:ManagementClientId"],
-                client_secret = configuration["Auth0:ManagementClientSecret"],
-                audience = $"https://{configuration["Auth0:Domain"]}/api/v2/"
+                client_id = configuration.GetAuth0Config(ConfigurationKeyConstants.Auth0ManagementClientId),
+                client_secret = configuration.GetAuth0Config(ConfigurationKeyConstants.Auth0ManagementClientSecret),
+                audience = $"https://{configuration.GetAuth0Config(ConfigurationKeyConstants.Auth0Domain)}/api/v2/"
             });
             request.AddParameter("application/json", json, ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);

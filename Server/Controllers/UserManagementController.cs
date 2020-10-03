@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AgoraAcademy.AgoraEgo.Server.Constants;
 using AgoraAcademy.AgoraEgo.Server.Interfaces;
 using AgoraAcademy.AgoraEgo.Server.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -38,7 +39,7 @@ namespace AgoraAcademy.AgoraEgo.Server.Controllers
         /// </summary>
         /// <param name="id">用户id，于请求主体内查找</param>
         /// <returns>用户信息或错误码</returns>
-        [Authorize("read:user")]
+        [Authorize(ScopeConstants.ReadUser)]
         [HttpGet("get/{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -56,7 +57,7 @@ namespace AgoraAcademy.AgoraEgo.Server.Controllers
         /// </summary>
         /// <param name="data">用户数据</param>
         /// <returns>用户ID或错误码</returns>
-        [Authorize("create:user")]
+        [Authorize(ScopeConstants.CreateUser)]
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] PureUserData data)
         {
@@ -74,7 +75,7 @@ namespace AgoraAcademy.AgoraEgo.Server.Controllers
         /// </summary>
         /// <param name="update">代表用户数据更新的对象</param>
         /// <returns>代表执行情况的状态码</returns>
-        [Authorize("edit:user")]
+        [Authorize(ScopeConstants.EditUser)]
         [HttpPut("edit")]
         public async Task<IActionResult> Edit([FromBody] UserDataUpdate update)
         {
@@ -86,7 +87,7 @@ namespace AgoraAcademy.AgoraEgo.Server.Controllers
         /// </summary>
         /// <param name="id">需要被删除的用户ID</param>
         /// <returns></returns>
-        [Authorize("delete:user")]
+        [Authorize(ScopeConstants.DeleteUser)]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -97,8 +98,8 @@ namespace AgoraAcademy.AgoraEgo.Server.Controllers
         /// 获取所有用户信息
         /// </summary>
         /// <returns>所有用户信息或404状态码，代表请求失败</returns>
+        [Authorize(ScopeConstants.ReadUser)]
         [HttpGet("get")]
-        [Authorize("read:user")]
         public async Task<IActionResult> GetAll()
         {
             UserData[] datas = await managementService.GetAllUserDataAsync();

@@ -1,4 +1,5 @@
 ﻿using AgoraAcademy.AgoraEgo.Server.Authorization;
+using AgoraAcademy.AgoraEgo.Server.Constants;
 using AgoraAcademy.AgoraEgo.Server.Data.DbContexts;
 using AgoraAcademy.AgoraEgo.Server.Extensions;
 using AgoraAcademy.AgoraEgo.Server.Interfaces;
@@ -84,7 +85,7 @@ namespace AgoraAcademy.AgoraEgo.Server.Services
                     request.PhoneNumber = update.PhoneNumber;
                 }
 
-                request.Connection = configuration["Auth0:Connection"];
+                request.Connection = configuration.GetAuth0Config(ConfigurationKeyConstants.Auth0Connection);
 
                 if (null == await userClient.UpdateAsync(data.StringUserID, request))
                 {
@@ -153,7 +154,7 @@ namespace AgoraAcademy.AgoraEgo.Server.Services
         {
             UserCreateRequest request = new UserCreateRequest
             {
-                Connection = configuration["Auth0:Connection"],
+                Connection = configuration.GetAuth0Config(ConfigurationKeyConstants.Auth0Connection),
                 Email = data.Email,
                 PhoneNumber = data.PhoneNumber
             };

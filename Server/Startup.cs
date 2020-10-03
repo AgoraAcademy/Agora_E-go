@@ -5,7 +5,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AgoraAcademy.AgoraEgo.Server.Authorization;
+using AgoraAcademy.AgoraEgo.Server.Constants;
 using AgoraAcademy.AgoraEgo.Server.Data.DbContexts;
+using AgoraAcademy.AgoraEgo.Server.Extensions;
 using AgoraAcademy.AgoraEgo.Server.Helpers;
 using AgoraAcademy.AgoraEgo.Server.Interfaces;
 using AgoraAcademy.AgoraEgo.Server.Services;
@@ -34,7 +36,7 @@ namespace AgoraAcademy.AgoraEgo.Server
         {
             Configuration = configuration;
             // Auth0:Domain应记录于secrets.json中，并应与Auth0相应中的域相同
-            Domain = $"https://{Configuration["Auth0:Domain"]}/";
+            Domain = $"https://{Configuration.GetAuth0Config(ConfigurationKeyConstants.Auth0Domain)}/";
         }
 
         /// <summary>
@@ -69,7 +71,7 @@ namespace AgoraAcademy.AgoraEgo.Server
                 options.Authority = Domain;
                 // Auth0:Audience应记录于secrets.json中，值应为Auth0内的登录api的identifier，
                 // 应在该api的permissions页面注册所有scope，并在Auth0域内的User & Roles/Roles页面设置用户组具体的scope列表
-                options.Audience = Configuration["Auth0:Audience"];
+                options.Audience = Configuration.GetAuth0Config(ConfigurationKeyConstants.Auth0Audience);
                 options.Events = new JwtBearerEvents
                 {
                     OnTokenValidated = context =>
@@ -90,7 +92,9 @@ namespace AgoraAcademy.AgoraEgo.Server
             });
 
             // 自动注册Auth0的基于scope的授权策略，注意LoginApiId为Auth0内部的本应用登录API的唯一ID，应记录于secret.json
-            GetNewManagementClient().ResourceServers.GetAsync(Configuration["Auth0:LoginApiId"]).Result.Scopes.ForEach((scope) => AddScopeRequirementPolicy(services, scope.Value));
+            GetNewManagementClient().ResourceServers
+                .GetAsync(Configuration.GetAuth0Config(ConfigurationKeyConstants.Auth0LoginApiId))
+                .Result.Scopes.ForEach((scope) => AddScopeRequirementPolicy(services, scope.Value));
 
             // 注册授权管理者
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
@@ -117,7 +121,8 @@ namespace AgoraAcademy.AgoraEgo.Server
         /// <returns>Auth0管理API客户端</returns>
         private ManagementApiClient GetNewManagementClient()
         {
-            return new ManagementApiClient(ManagementApiAccessTokenHelper.GetAccessToken(Configuration), Configuration["Auth0:Domain"]);
+            return new ManagementApiClient(ManagementApiAccessTokenHelper.GetAccessToken(Configuration),
+                Configuration.GetAuth0Config(ConfigurationKeyConstants.Auth0Domain));
         }
 
         /// <summary>
@@ -146,7 +151,7 @@ namespace AgoraAcademy.AgoraEgo.Server
                 // 连接数据库，应在Visual Studio内Server项目的Connected Services页面连接本地SQL Server，
                 // 然后选择将连接关键字记录在secrets.json中，
                 // 最后把appsettings.json中的DbConnectionString对应的值设为连接关键字
-                context.UseSqlServer(Configuration.GetConnectionString(Configuration["DbConnectionString"]));
+                context.UseSqlServer(Configuration.GetConnectionString(Configuration[ConfigurationKeyConstants.DbConnectionString]));
             });
         }
 
