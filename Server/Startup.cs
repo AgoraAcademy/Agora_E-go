@@ -10,7 +10,6 @@ using AgoraAcademy.AgoraEgo.Server.Helpers;
 using AgoraAcademy.AgoraEgo.Server.Interfaces;
 using AgoraAcademy.AgoraEgo.Server.Services;
 using Auth0.ManagementApi;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -90,11 +89,8 @@ namespace AgoraAcademy.AgoraEgo.Server
 
             });
 
-
-            // 于此处注册Auth0的基于scope的授权策略
-            // AddScopeRequirementPolicy(services, "scope_name");
-            // AddScopeRequirementPolicy(services, "scope_name", "policy_name");
-            // ...
+            // 自动注册Auth0的基于scope的授权策略，注意LoginApiId为Auth0内部的本应用登录API的唯一ID，应记录于secret.json
+            GetNewManagementClient().ResourceServers.GetAsync(Configuration["Auth0:LoginApiId"]).Result.Scopes.ForEach((scope) => AddScopeRequirementPolicy(services, scope.Value));
 
             // 注册授权管理者
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
@@ -134,20 +130,6 @@ namespace AgoraAcademy.AgoraEgo.Server
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(scope, policy => policy.Requirements.Add(new HasScopeRequirement(scope, Domain)));
-            });
-        }
-
-        /// <summary>
-        /// 注册身份认证策略
-        /// </summary>
-        /// <param name="services">服务集合</param>
-        /// <param name="scope">完整的scope名称，应与Auth0内注册的scope名称完全一致</param>
-        /// <param name="policyName">策略名称</param>
-        private void AddScopeRequirementPolicy(IServiceCollection services, string scope, string policyName)
-        {
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(policyName, policy => policy.Requirements.Add(new HasScopeRequirement(scope, Domain)));
             });
         }
 
