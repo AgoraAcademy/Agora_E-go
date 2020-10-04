@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -24,44 +24,44 @@ using Microsoft.Extensions.Hosting;
 namespace AgoraAcademy.AgoraEgo.Server
 {
     /// <summary>
-    /// Æô¶¯Àà£¬ÔÚ<see cref="Program.CreateHostBuilder(string[])"/>ÖĞ±»Ê¹ÓÃ
+    /// å¯åŠ¨ç±»ï¼Œåœ¨<see cref="Program.CreateHostBuilder(string[])"/>ä¸­è¢«ä½¿ç”¨
     /// </summary>
     public class Startup
     {
         /// <summary>
-        /// ¹¹Ôìº¯Êı
+        /// æ„é€ å‡½æ•°
         /// </summary>
-        /// <param name="configuration">ÒÀÀµ×¢ÈëµÄÅäÖÃÎÄ¼ş</param>
+        /// <param name="configuration">ä¾èµ–æ³¨å…¥çš„é…ç½®æ–‡ä»¶</param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            // Auth0:DomainÓ¦¼ÇÂ¼ÓÚsecrets.jsonÖĞ£¬²¢Ó¦ÓëAuth0ÏàÓ¦ÖĞµÄÓòÏàÍ¬
+            // Auth0:Domainåº”è®°å½•äºsecrets.jsonä¸­ï¼Œå¹¶åº”ä¸Auth0ç›¸åº”ä¸­çš„åŸŸç›¸åŒ
             Domain = $"https://{Configuration.GetAuth0Config(ConfigurationKeyConstants.Auth0Domain)}/";
         }
 
         /// <summary>
-        /// ÒÀÀµ×¢ÈëµÄÅäÖÃÎÄ¼ş
+        /// ä¾èµ–æ³¨å…¥çš„é…ç½®æ–‡ä»¶
         /// </summary>
         public IConfiguration Configuration { get; }
 
         /// <summary>
-        /// ÍêÕûAuth0ÓòÃû
+        /// å®Œæ•´Auth0åŸŸå
         /// </summary>
         private string Domain { get; }
 
         /// <summary>
-        /// ½«±»ÔËĞĞÊ±µ÷ÓÃ£¬±»ÓÃÓÚ½«·şÎñÌí¼Óµ½ÈİÆ÷¡£
+        /// å°†è¢«è¿è¡Œæ—¶è°ƒç”¨ï¼Œè¢«ç”¨äºå°†æœåŠ¡æ·»åŠ åˆ°å®¹å™¨ã€‚
         /// </summary>
-        /// <param name="services">·şÎñ¼¯ºÏ</param>
+        /// <param name="services">æœåŠ¡é›†åˆ</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            // ÓÚ´Ë´¦×¢²áÊı¾İ¿âÁ¬½Ó
+            // äºæ­¤å¤„æ³¨å†Œæ•°æ®åº“è¿æ¥
             //AddDbContext<TContext>(services);
             // ...
             AddDbContext<UserDataContext>(services);
 
 
-            // Ìí¼ÓÉí·İÑéÖ¤
+            // æ·»åŠ èº«ä»½éªŒè¯
             services.AddAuthentication((options) =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -69,14 +69,14 @@ namespace AgoraAcademy.AgoraEgo.Server
             }).AddJwtBearer(options =>
             {
                 options.Authority = Domain;
-                // Auth0:AudienceÓ¦¼ÇÂ¼ÓÚsecrets.jsonÖĞ£¬ÖµÓ¦ÎªAuth0ÄÚµÄµÇÂ¼apiµÄidentifier£¬
-                // Ó¦ÔÚ¸ÃapiµÄpermissionsÒ³Ãæ×¢²áËùÓĞscope£¬²¢ÔÚAuth0ÓòÄÚµÄUser & Roles/RolesÒ³ÃæÉèÖÃÓÃ»§×é¾ßÌåµÄscopeÁĞ±í
+                // Auth0:Audienceåº”è®°å½•äºsecrets.jsonä¸­ï¼Œå€¼åº”ä¸ºAuth0å†…çš„ç™»å½•apiçš„identifierï¼Œ
+                // åº”åœ¨è¯¥apiçš„permissionsé¡µé¢æ³¨å†Œæ‰€æœ‰scopeï¼Œå¹¶åœ¨Auth0åŸŸå†…çš„User & Roles/Rolesé¡µé¢è®¾ç½®ç”¨æˆ·ç»„å…·ä½“çš„scopeåˆ—è¡¨
                 options.Audience = Configuration.GetAuth0Config(ConfigurationKeyConstants.Auth0Audience);
                 options.Events = new JwtBearerEvents
                 {
                     OnTokenValidated = context =>
                     {
-                        // ½«access_token×÷Îªclaim¼ÇÂ¼µ½user£¬¿ÉÊ¹ÓÃAuth0µÄhttps://{Configuration["Auth0:Domain"]}/api/v2/userinfoÀ´»ñÈ¡ÓÃ»§ĞÅÏ¢
+                        // å°†access_tokenä½œä¸ºclaimè®°å½•åˆ°userï¼Œå¯ä½¿ç”¨Auth0çš„https://{Configuration["Auth0:Domain"]}/api/v2/userinfoæ¥è·å–ç”¨æˆ·ä¿¡æ¯
                         if (context.SecurityToken is JwtSecurityToken token)
                         {
                             if (context.Principal.Identity is ClaimsIdentity identity)
@@ -91,34 +91,34 @@ namespace AgoraAcademy.AgoraEgo.Server
 
             });
 
-            // ×Ô¶¯×¢²áAuth0µÄ»ùÓÚscopeµÄÊÚÈ¨²ßÂÔ£¬×¢ÒâLoginApiIdÎªAuth0ÄÚ²¿µÄ±¾Ó¦ÓÃµÇÂ¼APIµÄÎ¨Ò»ID£¬Ó¦¼ÇÂ¼ÓÚsecret.json
+            // è‡ªåŠ¨æ³¨å†ŒAuth0çš„åŸºäºscopeçš„æˆæƒç­–ç•¥ï¼Œæ³¨æ„LoginApiIdä¸ºAuth0å†…éƒ¨çš„æœ¬åº”ç”¨ç™»å½•APIçš„å”¯ä¸€IDï¼Œåº”è®°å½•äºsecret.json
             GetNewManagementClient().ResourceServers
                 .GetAsync(Configuration.GetAuth0Config(ConfigurationKeyConstants.Auth0LoginApiId))
                 .Result.Scopes.ForEach((scope) => AddScopeRequirementPolicy(services, scope.Value));
 
-            // ×¢²áÊÚÈ¨¹ÜÀíÕß
+            // æ³¨å†Œæˆæƒç®¡ç†è€…
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 
-            // ×¢²áAuth0ÓÃ»§¹ÜÀíAPI¿Í»§¶Ë
+            // æ³¨å†ŒAuth0ç”¨æˆ·ç®¡ç†APIå®¢æˆ·ç«¯
             services.AddScoped<ManagementApiClient>((_) => GetNewManagementClient());
 
-            // ×¢²á¿ÉÓÃÓÃ»§½ÇÉ«»ñÈ¡·şÎñ
+            // æ³¨å†Œå¯ç”¨ç”¨æˆ·è§’è‰²è·å–æœåŠ¡
             services.AddScoped<IAvailableRoleGetterService, AvailableRoleGetterService>();
 
-            // ×¢²áÓÃ»§¹ÜÀí·şÎñ
+            // æ³¨å†Œç”¨æˆ·ç®¡ç†æœåŠ¡
             services.AddScoped<IUserManagementService, UserManagementService>();
 
-            // ×¢²áÅäÖÃÎÄ¼ş
+            // æ³¨å†Œé…ç½®æ–‡ä»¶
             services.AddSingleton<IConfiguration>(Configuration);
 
-            // Ìí¼ÓËùÓĞ¿ØÖÆÆ÷
+            // æ·»åŠ æ‰€æœ‰æ§åˆ¶å™¨
             services.AddControllers();
         }
 
         /// <summary>
-        /// »ñÈ¡ĞÂAuth0¹ÜÀíAPI¿Í»§¶Ë
+        /// è·å–æ–°Auth0ç®¡ç†APIå®¢æˆ·ç«¯
         /// </summary>
-        /// <returns>Auth0¹ÜÀíAPI¿Í»§¶Ë</returns>
+        /// <returns>Auth0ç®¡ç†APIå®¢æˆ·ç«¯</returns>
         private ManagementApiClient GetNewManagementClient()
         {
             return new ManagementApiClient(ManagementApiAccessTokenHelper.GetAccessToken(Configuration),
@@ -126,10 +126,10 @@ namespace AgoraAcademy.AgoraEgo.Server
         }
 
         /// <summary>
-        /// ×¢²áÉí·İÈÏÖ¤²ßÂÔ£¬Ê¹ÓÃ<paramref name="scope"/>×÷Îª²ßÂÔµÄÃû³Æ
+        /// æ³¨å†Œèº«ä»½è®¤è¯ç­–ç•¥ï¼Œä½¿ç”¨<paramref name="scope"/>ä½œä¸ºç­–ç•¥çš„åç§°
         /// </summary>
-        /// <param name="services">·şÎñ¼¯ºÏ</param>
-        /// <param name="scope">ÍêÕûµÄscopeÃû³Æ£¬Ó¦ÓëAuth0ÄÚ×¢²áµÄscopeÃû³ÆÍêÈ«Ò»ÖÂ</param>
+        /// <param name="services">æœåŠ¡é›†åˆ</param>
+        /// <param name="scope">å®Œæ•´çš„scopeåç§°ï¼Œåº”ä¸Auth0å†…æ³¨å†Œçš„scopeåç§°å®Œå…¨ä¸€è‡´</param>
         private void AddScopeRequirementPolicy(IServiceCollection services, string scope)
         {
             services.AddAuthorization(options =>
@@ -139,27 +139,27 @@ namespace AgoraAcademy.AgoraEgo.Server
         }
 
         /// <summary>
-        /// ×¢²áÊı¾İ¿âÉÏÏÂÎÄ
+        /// æ³¨å†Œæ•°æ®åº“ä¸Šä¸‹æ–‡
         /// </summary>
-        /// <typeparam name="TContext">Êı¾İ¿âÉÏÏÂÎÄÀàĞÍ</typeparam>
-        /// <param name="services">·şÎñ¼¯ºÏ</param>
+        /// <typeparam name="TContext">æ•°æ®åº“ä¸Šä¸‹æ–‡ç±»å‹</typeparam>
+        /// <param name="services">æœåŠ¡é›†åˆ</param>
         private void AddDbContext<TContext>(IServiceCollection services)
             where TContext : DbContext
         {
             services.AddDbContext<TContext>((context) =>
             {
-                // Á¬½ÓÊı¾İ¿â£¬Ó¦ÔÚVisual StudioÄÚServerÏîÄ¿µÄConnected ServicesÒ³ÃæÁ¬½Ó±¾µØSQL Server£¬
-                // È»ºóÑ¡Ôñ½«Á¬½Ó¹Ø¼ü×Ö¼ÇÂ¼ÔÚsecrets.jsonÖĞ£¬
-                // ×îºó°Ñappsettings.jsonÖĞµÄDbConnectionString¶ÔÓ¦µÄÖµÉèÎªÁ¬½Ó¹Ø¼ü×Ö
+                // è¿æ¥æ•°æ®åº“ï¼Œåº”åœ¨Visual Studioå†…Serveré¡¹ç›®çš„Connected Servicesé¡µé¢è¿æ¥æœ¬åœ°SQL Serverï¼Œ
+                // ç„¶åé€‰æ‹©å°†è¿æ¥å…³é”®å­—è®°å½•åœ¨secrets.jsonä¸­ï¼Œ
+                // æœ€åæŠŠappsettings.jsonä¸­çš„DbConnectionStringå¯¹åº”çš„å€¼è®¾ä¸ºè¿æ¥å…³é”®å­—
                 context.UseSqlServer(Configuration.GetConnectionString(Configuration[ConfigurationKeyConstants.DbConnectionString]));
             });
         }
 
         /// <summary>
-        /// ½«±»ÔËĞĞÊ±µ÷ÓÃ£¬±»ÓÃÓÚÅäÖÃHTTPÇëÇó¹ÜµÀ¡£
+        /// å°†è¢«è¿è¡Œæ—¶è°ƒç”¨ï¼Œè¢«ç”¨äºé…ç½®HTTPè¯·æ±‚ç®¡é“ã€‚
         /// </summary>
-        /// <param name="app">Ó¦ÓÃ½¨ÔìÆ÷</param>
-        /// <param name="env">ÍĞ¹Ü»·¾³</param>
+        /// <param name="app">åº”ç”¨å»ºé€ å™¨</param>
+        /// <param name="env">æ‰˜ç®¡ç¯å¢ƒ</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -168,7 +168,7 @@ namespace AgoraAcademy.AgoraEgo.Server
             }
             else
             {
-                // Èç¹ûÏëÒªÌí¼Ó²ÎÊıÒÔÓ¦¶ÔÊµ¼ÊÉú²úĞèÇó£¬Ï¸½Ú¼û https://aka.ms/aspnetcore-hsts.
+                // å¦‚æœæƒ³è¦æ·»åŠ å‚æ•°ä»¥åº”å¯¹å®é™…ç”Ÿäº§éœ€æ±‚ï¼Œç»†èŠ‚è§ https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

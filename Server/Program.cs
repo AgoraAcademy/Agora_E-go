@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,24 +10,24 @@ using Microsoft.Extensions.Logging;
 namespace AgoraAcademy.AgoraEgo.Server
 {
     /// <summary>
-    /// ³ÌĞòÖ÷Èë¿ÚÀà
+    /// ç¨‹åºä¸»å…¥å£ç±»
     /// </summary>
     public class Program
     {
         /// <summary>
-        /// ³ÌĞòÖ÷Èë¿Ú·½·¨
+        /// ç¨‹åºä¸»å…¥å£æ–¹æ³•
         /// </summary>
-        /// <param name="args">Íâ²¿²ÎÊı</param>
+        /// <param name="args">å¤–éƒ¨å‚æ•°</param>
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
         }
 
         /// <summary>
-        /// ´´ÔìÍĞ¹Ü»·¾³½¨ÔìÕß
+        /// åˆ›é€ æ‰˜ç®¡ç¯å¢ƒå»ºé€ è€…
         /// </summary>
-        /// <param name="args">Íâ²¿²ÎÊı</param>
-        /// <returns>ÍĞ¹Ü»·¾³½¨ÔìÕß</returns>
+        /// <param name="args">å¤–éƒ¨å‚æ•°</param>
+        /// <returns>æ‰˜ç®¡ç¯å¢ƒå»ºé€ è€…</returns>
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
