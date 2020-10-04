@@ -56,10 +56,10 @@ namespace AgoraAcademy.AgoraEgo.Server
         public void ConfigureServices(IServiceCollection services)
         {
             // 于此处注册数据库连接
-            //AddDbContext<TContext>(services);
+            // AddDbContext<TContext>(services);
             // ...
             AddDbContext<UserDataContext>(services);
-
+            AddDbContext<LearnerProjectContext>(services);
 
             // 添加身份验证
             services.AddAuthentication((options) =>
