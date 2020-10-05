@@ -96,8 +96,19 @@ namespace AgoraAcademy.AgoraEgo.Server
                 .GetAsync(Configuration.GetAuth0Config(ConfigurationKeyConstants.Auth0LoginApiId))
                 .Result.Scopes.ForEach((scope) => AddScopeRequirementPolicy(services, scope.Value));
 
+            // 注册基于资源的授权策略
+            services.AddAuthorization((options) =>
+            {
+                options.AddPolicy(AuthorizationPolicyConstants.Collaborator, (builder) => builder.AddRequirements(new CollaboratorRequirement()));
+                options.AddPolicy(AuthorizationPolicyConstants.GuidingMentor, (builder) => builder.AddRequirements(new GuidingMentorRequirement()));
+                options.AddPolicy(AuthorizationPolicyConstants.Owner, (builder) => builder.AddRequirements(new OwnershipRequirement()));
+            });
+
             // 注册授权管理者
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+            services.AddSingleton<IAuthorizationHandler, ResourceOwnershipAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, ResourceCollaboratorAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, ResourceGuidingMentorAuthorizationHandler>();
 
             // 注册Auth0用户管理API客户端
             services.AddScoped<ManagementApiClient>((_) => GetNewManagementClient());
