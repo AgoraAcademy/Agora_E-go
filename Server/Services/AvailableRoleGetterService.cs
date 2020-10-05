@@ -1,4 +1,5 @@
-﻿using AgoraAcademy.AgoraEgo.Server.Interfaces;
+﻿using AgoraAcademy.AgoraEgo.Server.Extensions;
+using AgoraAcademy.AgoraEgo.Server.Interfaces;
 using Auth0.ManagementApi;
 using Auth0.ManagementApi.Models;
 using Microsoft.Extensions.Configuration;
@@ -35,7 +36,7 @@ namespace AgoraAcademy.AgoraEgo.Server.Services
         public async Task<Role[]> GetAvailableRoles()
         {
             // 发送获取请求并将返回值转化为数组
-            return (await managementClient.Roles.GetAllAsync(new GetRolesRequest())).ToArray();
+            return await managementClient.Roles.GetAllAsync(new GetRolesRequest()).Select((roles) => roles.ToArray());
         }
     }
 }

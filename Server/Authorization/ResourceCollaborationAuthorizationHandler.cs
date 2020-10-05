@@ -1,4 +1,5 @@
-﻿using AgoraAcademy.AgoraEgo.Server.Interfaces;
+﻿using AgoraAcademy.AgoraEgo.Server.Extensions;
+using AgoraAcademy.AgoraEgo.Server.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
@@ -35,8 +36,10 @@ namespace AgoraAcademy.AgoraEgo.Server.Authorization
         /// <returns>用于等待的<see cref="Task"/>对象</returns>
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, CollaboratorRequirement requirement, ICollaborateResource resource)
         {
-            // 通过字符串ID获取数字ID，缺损则为-1
-            int ID = (await managementService.GetUserDatasAsync((datas) => datas.Where((data) => context.User.HasClaim("UserID", data.StringUserID)).ToArray())).FirstOrDefault()?.ID ?? -1;
+            // 获取数字ID，未找到用户则为-1
+            int ID = await managementService
+                .RetrieveUserWithClaimPrincipal(context.User)
+                .Select((data) => data?.ID ?? -1);
             if (resource.CollaboratorIDs.Contains(ID))
             {
                 context.Succeed(requirement);
